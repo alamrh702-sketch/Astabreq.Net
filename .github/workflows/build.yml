@@ -25,6 +25,12 @@ jobs:
           flutter-version: '3.19.0'
           cache: true
 
+      - name: Create Android directories if missing
+        run: |
+          if [ ! -d "android" ]; then
+            flutter create . --org com.astabreq.net --project-name astabreq_net --platforms=android
+          fi
+
       - name: Install dependencies
         run: flutter pub get
 
