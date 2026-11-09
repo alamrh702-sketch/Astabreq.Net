@@ -22,7 +22,7 @@ class AstabreqNetApp extends StatelessWidget {
   }
 }
 
-// 1. شاشة تسجيل الدخول والربط بالرسيلر (تظهر أول ما يفتح التطبيق)
+// 1. شاشة تسجيل الدخول والربط بالرسيلر
 class ResellerLoginScreen extends StatefulWidget {
   const ResellerLoginScreen({super.key});
 
@@ -46,7 +46,6 @@ class _ResellerLoginScreenState extends State<ResellerLoginScreen> {
 
     setState(() => _isLoading = true);
 
-    // محاكاة عملية المزامنة والاتصال بالسيرفر
     Future.delayed(const Duration(seconds: 2), () {
       setState(() => _isLoading = false);
       Navigator.pushReplacement(
@@ -116,7 +115,7 @@ class _ResellerLoginScreenState extends State<ResellerLoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
                   child: _isLoading
-                      const CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : const Text('مزامنة واستخراج البيانات', style: TextStyle(fontSize: 16)),
                 ),
               ],
@@ -128,7 +127,7 @@ class _ResellerLoginScreenState extends State<ResellerLoginScreen> {
   }
 }
 
-// 2. الواجهة الرئيسية (Dashboard) المماثلة للصور المطورة
+// 2. الواجهة الرئيسية (Dashboard)
 class MainDashboard extends StatefulWidget {
   const MainDashboard({super.key});
 
@@ -176,7 +175,6 @@ class _MainDashboardState extends State<MainDashboard> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            // شبكة البطاقات الإحصائية (Grid Cards)
             GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,
@@ -196,7 +194,6 @@ class _MainDashboardState extends State<MainDashboard> {
               ],
             ),
             const SizedBox(height: 15),
-            // بطاقة مراقبة الأجهزة والبنغ
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -235,7 +232,6 @@ class _MainDashboardState extends State<MainDashboard> {
           ],
         ),
       ),
-      // شريط التنقل السفلي (Bottom Navigation)
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.deepPurple,
