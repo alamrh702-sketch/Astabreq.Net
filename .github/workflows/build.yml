@@ -25,14 +25,13 @@ jobs:
           flutter-version: '3.19.0'
           cache: true
 
-      - name: Create Android directories if missing
+      - name: Clean and Recreate Android Platform
         run: |
-          if [ ! -d "android" ]; then
-            flutter create . --org com.astabreq.net --project-name astabreq_net --platforms=android
-          fi
+          rm -rf android ios linux macos windows web
+          flutter create . --org com.astabreq.net --project-name astabreq_net
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --verbose
+        run: flutter build apk --release
