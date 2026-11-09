@@ -1,55 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  // متغيرات تخزين البيانات القادمة من السيرفر
-  String totalUsers = "...";
-  String activeUsers = "...";
-  String offlineUsers = "...";
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData(); // جلب البيانات أول ما يفتح التطبيق
-  }
-
-  // دالة الاتصال بالدومين وجلب الإحصائيات
-  Future<void> fetchData() async {
-    try {
-      final response = await http.get(
-        Uri.parse('https://estabreq.org/stats.php'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          totalUsers = data['total_users'].toString();
-          activeUsers = data['active_users'].toString();
-          offlineUsers = data['offline_users'].toString();
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print("خطأ بالاتصال: $e");
-    }
-  }
+class DebtBookScreen extends StatelessWidget {
+  const DebtBookScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -57,70 +9,68 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF4F5F9),
       appBar: AppBar(
         backgroundColor: const Color(0xFF6C3483),
-        title: const Text('لوحة التحكم - Astabreq.Net', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('دفتر الديون والحسابات', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              setState(() { isLoading = true; });
-              fetchData(); // زر لتحديث البيانات يدوياً
-            },
-          ),
-        ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF6C3483)))
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView(
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            // بطاقة الملخص المالي
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6C3483),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // بطاقة المشتركين الكلية
-                  buildStatCard('إجمالي المشتركين', totalUsers, Icons.people, Colors.blue),
-                  const SizedBox(height: 12),
-                  // المشتركين الفعالين (أونلاين)
-                  buildStatCard('المشتركين الفعالين', activeUsers, Icons.wifi, Colors.green),
-                  const SizedBox(height: 12),
-                  // المشتركين المنتهين أو الطافيين
-                  buildStatCard('المنتهين / الطافيين', offlineUsers, Icons.wifi_off, Colors.red),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text('إجمالي الديون المعلقة', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                      SizedBox(height: 5),
+                      Text('150,000 د.ع', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const Icon(Icons.account_balance_wallet, color: Colors.white, size: 40),
                 ],
               ),
             ),
+            const SizedBox(height: 15),
+
+            // قائمة الديون للمشتركين
+            Expanded(
+              child: ListView(
+                children: [
+                  buildDebtCard('أحمد علي', '35,000 د.ع', 'متبقي من اشتراك الشهر الماضي', Colors.orange),
+                  buildDebtCard('حسين كريم', '25,000 د.ع', 'قيمة الباقة الجديدة', Colors.red),
+                  buildDebtCard('محمد جاسم', '90,000 د.ع', 'دين قديم', Colors.purple),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget buildStatCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 15, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text(value, style: TextStyle(color: color, fontSize: 26, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          CircleAvatar(
-            backgroundColor: color.withOpacity(0.15),
-            radius: 28,
-            child: Icon(icon, color: color, size: 30),
-          ),
-        ],
+  Widget buildDebtCard(String name, String amount, String note, Color color) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(0.15),
+          child: Icon(Icons.money_off, color: color),
+        ),
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(note),
+        trailing: Text(
+          amount,
+          style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 15),
+        ),
       ),
     );
   }
