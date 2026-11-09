@@ -59,7 +59,7 @@ class _ResellerLoginScreenState extends State<ResellerLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ربط حساب الرسيلر - سلام نت'),
+        title: const Text('ربط حساب الرسيلر - استبرق نت'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
